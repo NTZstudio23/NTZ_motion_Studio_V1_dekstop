@@ -8,6 +8,7 @@ import {
   Film,
   Grid3X3,
   Maximize2,
+  Minimize2,
   Pause,
   Play,
   Repeat,
@@ -46,6 +47,8 @@ interface PreviewStageProps {
   onToggleGrid: () => void;
   onReload: () => void;
   onToggleFullscreen: () => void;
+  isPseudoFullscreen: boolean;
+  onExitPseudoFullscreen: () => void;
   onAnalyzeLoad: () => void;
   onOpenCode: () => void;
   onOpenVideoRef: () => void;
@@ -84,6 +87,8 @@ export const PreviewStage: React.FC<PreviewStageProps> = ({
   onToggleGrid,
   onReload,
   onToggleFullscreen,
+  isPseudoFullscreen,
+  onExitPseudoFullscreen,
   onAnalyzeLoad,
   onOpenCode,
   onOpenVideoRef,
@@ -165,9 +170,13 @@ export const PreviewStage: React.FC<PreviewStageProps> = ({
             type="button"
             onClick={onToggleFullscreen}
             title="Mode Layar Penuh (F)"
-            className="flex flex-row lg:flex-col items-center justify-center gap-1.5 lg:gap-1 px-2.5 lg:px-1.5 py-2 rounded-lg border bg-[#121722] border-slate-800 text-slate-300 hover:border-slate-700 text-[11px] font-medium transition-colors whitespace-nowrap shrink-0 cursor-pointer"
+            className={`flex flex-row lg:flex-col items-center justify-center gap-1.5 lg:gap-1 px-2.5 lg:px-1.5 py-2 rounded-lg border text-[11px] font-medium transition-colors whitespace-nowrap shrink-0 cursor-pointer ${
+              isPseudoFullscreen
+                ? 'bg-cyan-950/50 border-cyan-700/60 text-cyan-300'
+                : 'bg-[#121722] border-slate-800 text-slate-300 hover:border-slate-700'
+            }`}
           >
-            <Maximize2 className="w-4 h-4 shrink-0" />
+            {isPseudoFullscreen ? <Minimize2 className="w-4 h-4 shrink-0" /> : <Maximize2 className="w-4 h-4 shrink-0" />}
             <span className="lg:text-[10px] leading-tight text-center">Full</span>
           </button>
 
@@ -201,7 +210,7 @@ export const PreviewStage: React.FC<PreviewStageProps> = ({
       </aside>
 
       {/* Column 2: Center Auto-Fitted Canvas & Transport */}
-      <section className="flex-1 min-w-0 min-h-0 flex flex-col bg-[#090B10] p-4 gap-3 lg:overflow-hidden">
+      <section className="flex-1 min-w-0 min-h-0 flex flex-col bg-[#090B10] p-4 gap-3 lg:overflow-y-auto">
         {/* Compact Status Strip */}
         <div className="flex items-center justify-between gap-3 flex-wrap shrink-0">
           <div className="flex items-center gap-2 text-xs text-slate-400 font-mono tabular-nums">
@@ -222,8 +231,24 @@ export const PreviewStage: React.FC<PreviewStageProps> = ({
           </span>
         </div>
 
-        {/* Main Canvas Stage (flex-1 min-h-0 so it always fits desktop viewport cleanly) */}
-        <div className="flex-1 min-h-[260px] flex items-center justify-center bg-[#06080C] border border-slate-800/80 rounded-xl p-3 relative overflow-hidden">
+        {/* Main Canvas Stage (auto-fits desktop viewport cleanly, supports pseudo-fullscreen in iframes) */}
+        <div
+          className={
+            isPseudoFullscreen
+              ? 'fixed inset-0 z-50 bg-[#05070B] p-6 flex flex-col items-center justify-center gap-3'
+              : 'flex-1 min-h-[180px] flex items-center justify-center bg-[#06080C] border border-slate-800/80 rounded-xl p-3 relative overflow-hidden'
+          }
+        >
+          {isPseudoFullscreen && (
+            <button
+              type="button"
+              onClick={onExitPseudoFullscreen}
+              className="absolute top-4 right-4 z-10 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#161C29] hover:bg-slate-800 border border-slate-700 text-xs font-semibold text-slate-100 cursor-pointer"
+            >
+              <Minimize2 className="w-3.5 h-3.5" />
+              <span>Keluar Full Preview (Esc)</span>
+            </button>
+          )}
           <div
             ref={previewBoxRef}
             style={{ aspectRatio: `${studio.width} / ${studio.height}` }}

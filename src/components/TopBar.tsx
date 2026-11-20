@@ -23,9 +23,9 @@ export const TopBar: React.FC<TopBarProps> = ({
   onRenderOrCancel,
 }) => {
   return (
-    <header className="h-14 shrink-0 border-b border-slate-800/80 bg-[#0C0F16] px-5 flex items-center justify-between gap-8">
+    <header className="h-14 shrink-0 border-b border-slate-800/80 bg-[#0C0F16] px-4 xl:px-5 flex items-center justify-between gap-3 xl:gap-6">
       {/* Zone 1: Brand wordmark */}
-      <div className="flex items-center gap-2.5 shrink-0 whitespace-nowrap">
+      <div className="flex items-center gap-2 shrink-0 whitespace-nowrap">
         <svg className="w-6 h-6 shrink-0" viewBox="0 0 40 40" fill="none" aria-hidden="true">
           <rect width="40" height="40" rx="8" fill="#131926" stroke="#253147" strokeWidth="1.5" />
           <path fill="#22D3EE" d="M10 30V10h4.5l10 12.5V10H29v20h-4.5l-10-12.5V30z" />
@@ -36,7 +36,7 @@ export const TopBar: React.FC<TopBarProps> = ({
       </div>
 
       {/* Zone 2: Clean single-line workspace navigation */}
-      <nav className="flex items-center gap-3 lg:gap-5 text-xs font-medium text-slate-400 overflow-x-auto">
+      <nav className="flex items-center gap-2.5 lg:gap-4 text-xs font-medium text-slate-400 overflow-x-auto no-scrollbar">
         <button
           type="button"
           onClick={onOpenCode}
