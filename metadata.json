@@ -1,0 +1,6 @@
+{
+  "name": "NTZ Motion Studio V.1 Desktop",
+  "description": "Aplikasi desktop ringan dan stabil untuk membuat, pratinjau, dan render video motion graphics HTML5 Canvas presisi frame-by-frame dengan metadata microstock.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
