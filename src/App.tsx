@@ -144,8 +144,9 @@ export default function App() {
     alphaSupported: false,
   });
 
-  // Modals
+  // Modals & Preview Fullscreen
   const [openModalName, setOpenModalName] = useState<'code' | 'prompt' | 'preset' | 'batch' | 'videoref' | 'help' | null>(null);
+  const [isPseudoFullscreen, setIsPseudoFullscreen] = useState(false);
 
   // Batch queue
   const [batchItems, setBatchItems] = useState<BatchItem[]>([]);
@@ -456,10 +457,17 @@ export default function App() {
     if (!el) return;
     if (document.fullscreenElement) {
       document.exitFullscreen().catch(() => {});
+      setIsPseudoFullscreen(false);
+    } else if (isPseudoFullscreen) {
+      setIsPseudoFullscreen(false);
+    } else if (el.requestFullscreen) {
+      el.requestFullscreen().catch(() => {
+        setIsPseudoFullscreen(true);
+      });
     } else {
-      el.requestFullscreen?.().catch(() => {});
+      setIsPseudoFullscreen(true);
     }
-  }, []);
+  }, [isPseudoFullscreen]);
 
   const reloadAnimation = useCallback(() => {
     if (isRenderingRef.current) return;
@@ -1133,6 +1141,10 @@ Return ONLY one JSON object, no explanation:
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
+        if (isPseudoFullscreen) {
+          setIsPseudoFullscreen(false);
+          return;
+        }
         if (!batchRunning) setOpenModalName(null);
         return;
       }
@@ -1162,7 +1174,7 @@ Return ONLY one JSON object, no explanation:
     };
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
-  }, [openModalName, batchRunning, togglePlay, stepFrame, resetTimeline, toggleFullscreen, updateStudioSetting]);
+  }, [openModalName, batchRunning, isPseudoFullscreen, togglePlay, stepFrame, resetTimeline, toggleFullscreen, updateStudioSetting]);
 
   return (
     <div className="min-h-screen lg:h-screen flex flex-col bg-[#090B10] text-slate-100 lg:overflow-hidden">
@@ -1225,6 +1237,8 @@ Return ONLY one JSON object, no explanation:
           onToggleGrid={() => updateStudioSetting((p) => ({ ...p, gridVisible: !p.gridVisible }), false)}
           onReload={reloadAnimation}
           onToggleFullscreen={toggleFullscreen}
+          isPseudoFullscreen={isPseudoFullscreen}
+          onExitPseudoFullscreen={() => setIsPseudoFullscreen(false)}
           onAnalyzeLoad={analyzeLoad}
           onOpenCode={() => setOpenModalName('code')}
           onOpenVideoRef={() => setOpenModalName('videoref')}
