@@ -1,5 +1,6 @@
 import React from 'react';
 import { Code2, Film, FolderKanban, HelpCircle, Layers, Play, Sparkles, Square } from 'lucide-react';
+import { PWAInstallButton } from './PWAInstallButton';
 
 interface TopBarProps {
   isRendering: boolean;
@@ -87,8 +88,9 @@ export const TopBar: React.FC<TopBarProps> = ({
         </button>
       </nav>
 
-      {/* Zone 3: 1 Primary CTA */}
+      {/* Zone 3: Install App & 1 Primary CTA */}
       <div className="flex items-center gap-2 shrink-0">
+        <PWAInstallButton />
         <button
           type="button"
           onClick={onRenderOrCancel}
